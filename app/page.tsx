@@ -6,6 +6,8 @@ export default function Home() {
       <header>
         <nav>
           <Link className='hover:underline' href="/dashboard">Dashboard</Link>
+          <span>&nbsp;&nbsp;</span>
+          <Link className='hover:underline' href="/api/interactions">api</Link>
         </nav>
       </header>
       <main className=''></main>
