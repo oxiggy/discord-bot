@@ -147,7 +147,7 @@ export function handleRolesSlash(json: Json) {
   return {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
-      content: "Выбери роль по интересам — её будут упоминать при соответствующей активности. Повторное нажатие снимет роль.",
+      content: "Выбери роль по интересам — её могут упоминать при соответствующей активности. Повторное нажатие снимет роль.",
       flags: MessageFlags.Ephemeral,
       components: buildRoleButtons(),
     },

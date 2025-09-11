@@ -68,11 +68,10 @@ export async function POST(req: Request) {
         return new NextResponse("Unhandled interaction type", { status: 400 });
       }
     }
-  } catch (e: any) {
-    const msg = e?.stack || e?.message || String(e);
+  } catch (e: unknown) {
     return NextResponse.json({
       type: InteractionResponseType.ChannelMessageWithSource,
-      data: { content: `DEV error:\n${msg}`, flags: MessageFlags.Ephemeral },
+      data: { content: `Ошибка... или это просто мини-саботаж 🤖`, flags: MessageFlags.Ephemeral },
     });
   }
 }

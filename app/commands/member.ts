@@ -1,5 +1,5 @@
-import { InteractionResponseType, MessageFlags } from "discord-api-types/v10";
-import type { APIApplicationCommandInteraction, APIGuildMember, APIUser } from "discord-api-types/v10";
+import { InteractionResponseType, MessageFlags } from 'discord-api-types/v10'
+import type { APIApplicationCommandInteraction, APIGuildMember } from "discord-api-types/v10";
 import { config } from '@/lib/config'
 
 const DISCORD_API = config.discord.api;
@@ -10,7 +10,7 @@ export async function handleMemberCommand(
   botToken: string
 ) {
   // команда доступна только в гильдии
-  const guildId = (json as any).guild_id as string | undefined;
+  const guildId = json.guild_id as string | undefined;
   if (!guildId) {
     return {
       type: InteractionResponseType.ChannelMessageWithSource,
@@ -21,27 +21,23 @@ export async function handleMemberCommand(
     };
   }
 
+
   // 1) целевой пользователь: опция user (type=6) или вызывающий
   const optionUserId: string | undefined =
-    (json.data as any)?.options?.[0]?.type === 6
-      ? (json.data as any).options[0].value
+    json.data?.options?.[0]?.type === 6
+      ? json.data.options[0].value
       : undefined;
 
   // resolved может уже содержать member выбранного user
   const resolvedMember: APIGuildMember | undefined = optionUserId
-    ? (json.data as any)?.resolved?.members?.[optionUserId]
-    : (json as any).member;
+    ? json.data?.resolved?.members?.[optionUserId]
+    : json.member;
 
-  const resolvedUser: APIUser | undefined = optionUserId
-    ? (json.data as any)?.resolved?.users?.[optionUserId]
-    : (json as any).member?.user;
-
-  const targetUserId: string | undefined = optionUserId ?? (json as any).member?.user?.id;
+  const targetUserId: string | undefined = optionUserId ?? json.member?.user?.id;
 
   // 2) если resolved нет (редко), добираем ч/з REST
-  let nickname: string | null = (resolvedMember as any)?.nick ?? null;
-  let roleIds: string[] =
-    ((resolvedMember as any)?.roles ?? (json as any).member?.roles ?? []) as string[];
+  let nickname: string | null = resolvedMember?.nick ?? null;
+  let roleIds: string[] = (resolvedMember?.roles ?? json.member?.roles ?? []) as string[];
 
   if ((!nickname || roleIds.length === 0) && targetUserId) {
     // GET /guilds/{guild.id}/members/{user.id}
@@ -75,9 +71,9 @@ export async function handleMemberCommand(
 
   const display =
     nickname ??
-    (resolvedMember as any)?.nick ??
-    (resolvedUser as any)?.global_name ??
-    (resolvedUser as any)?.username ??
+    resolvedMember?.nick ??
+    resolvedMember?.global_name ??
+    resolvedMember?.username ??
     "(без ника)";
 
   const mention = targetUserId ? `<@${targetUserId}>` : "неизвестно";
