@@ -1,73 +1,82 @@
 import { NextResponse } from "next/server";
-import {
-  verifyKey,
-  InteractionType,
-  InteractionResponseType,
-} from "discord-interactions";
+import { InteractionType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+// main
+import { CommandName } from '@/lib/discord/commands'
+import { config } from '@/lib/config'
+import { verifyDiscordRequest } from '@/lib/discord/verify'
+import { notFoundReply, unknownActionReply } from '@/lib/discord/reply'
+// commands
+import { handleRoleButton, handleRolesSlash, isRoleButton } from '@/app/commands/roles'
+import { handleHelpCommand } from '@/app/commands/help'
+import { handleMemberCommand } from '@/app/commands/member'
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  const BOT_TOKEN  = config.discord.botToken;
+  const PUBLIC_KEY = config.discord.publicKey;
+
   try {
-    const PUBLIC_KEY = process.env.DISCORD_PUBLIC_KEY!;
-    const signature = req.headers.get("x-signature-ed25519");
-    const timestamp = req.headers.get("x-signature-timestamp");
-    if (!PUBLIC_KEY || !signature || !timestamp) {
-      return new NextResponse("Bad request", { status: 400 });
-    }
+    const verified = await verifyDiscordRequest(req, PUBLIC_KEY);
+    if (!verified.ok) return verified.error;
 
-    // Сырое тело до верификации
-    const body = await req.text();
+    const { json } = verified;
 
-    // Проверка подписи
-    const isValid = await verifyKey(body, signature, timestamp, PUBLIC_KEY);
-    if (!isValid) {
-      return new NextResponse("invalid request signature", { status: 401 });
-    }
-
-    const json = JSON.parse(body);
-
-    // Валидация URL в Dev Portal
-    if (json.type === InteractionType.PING) {
-      return NextResponse.json({ type: InteractionResponseType.PONG });
-    }
-
-    // Slash-команды
-    if (json.type === InteractionType.APPLICATION_COMMAND) {
-      const name = json.data?.name;
-
-      if (name === "ping") {
-        return NextResponse.json({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: "Pong! 🏓" },
-        });
+    switch (json.type) {
+      /* Валидация URL в Dev Portal */
+      case InteractionType.Ping: {
+        return NextResponse.json({ type: InteractionResponseType.Pong });
       }
 
-      if (name === "help") {
-        return NextResponse.json({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: [
-              "**Доступные команды:**",
-              "• `/ping` — отвечает `Pong!`.",
-              "• `/help` — показывает это сообщение.",
-            ].join("\n"),
-          },
-        });
+      /**
+       * Slash-команды
+       */
+      case InteractionType.ApplicationCommand: {
+        const name = json.data?.name as CommandName | undefined;
+
+        if (name === CommandName.Help) {
+          return NextResponse.json(handleHelpCommand());
+        }
+
+        if (name === CommandName.Roles) {
+          return NextResponse.json(handleRolesSlash(json));
+        }
+
+        if (name === CommandName.Member) {
+          const response = await handleMemberCommand(json, BOT_TOKEN);
+          return NextResponse.json(response);
+        }
+
+        return NextResponse.json(notFoundReply);
       }
 
-      return NextResponse.json({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: { content: "Команда не найдена." },
-      });
-    }
+      /**
+       * Взаимодействие с сообщениями (кнопки, селекты и пр.)
+       */
+      case InteractionType.MessageComponent: {
+        const customId: string | undefined = json.data?.custom_id;
 
-    return new NextResponse("Unhandled interaction type", { status: 400 });
+        if (isRoleButton(customId)) {
+          const resp = await handleRoleButton(json, BOT_TOKEN);
+          return NextResponse.json(resp);
+        }
+
+        return NextResponse.json(unknownActionReply);
+      }
+
+      default: {
+        return new NextResponse("Unhandled interaction type", { status: 400 });
+      }
+    }
   } catch (e: any) {
     const msg = e?.stack || e?.message || String(e);
     return NextResponse.json({
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data: { content: `DEV error:\n${msg}`, flags: 64 },
+      type: InteractionResponseType.ChannelMessageWithSource,
+      data: { content: `DEV error:\n${msg}`, flags: MessageFlags.Ephemeral },
     });
   }
+}
+
+export async function GET() {
+  return NextResponse.json({ ok: true });
 }
