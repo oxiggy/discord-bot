@@ -6,7 +6,7 @@ import { config } from '@/lib/config'
 import { verifyDiscordRequest } from '@/lib/discord/verify'
 import { notFoundReply, unknownActionReply } from '@/lib/discord/reply'
 // commands
-import { handleRoleButton, handleRolesSlash, isRoleButton } from '@/app/commands/roles'
+import { handleRoleButton, handleRolesCommand, isRoleButton } from '@/app/commands/roles'
 import { handleHelpCommand } from '@/app/commands/help'
 import { handleMemberCommand } from '@/app/commands/member'
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         }
 
         if (name === CommandName.Roles) {
-          return NextResponse.json(handleRolesSlash(json));
+          return NextResponse.json(handleRolesCommand(json));
         }
 
         if (name === CommandName.Member) {
@@ -57,8 +57,8 @@ export async function POST(req: Request) {
         const customId: string | undefined = json.data?.custom_id;
 
         if (isRoleButton(customId)) {
-          const resp = await handleRoleButton(json, BOT_TOKEN);
-          return NextResponse.json(resp);
+          const response = await handleRoleButton(json, BOT_TOKEN);
+          return NextResponse.json(response);
         }
 
         return NextResponse.json(unknownActionReply);

@@ -1,17 +1,16 @@
 import { InteractionResponseType, MessageFlags } from 'discord-api-types/v10'
-import type { APIApplicationCommandInteraction, APIGuildMember } from "discord-api-types/v10";
+import type { APIApplicationCommandInteraction, APIChatInputApplicationCommandGuildInteraction, APIInteractionDataResolvedGuildMember } from "discord-api-types/v10";
 import { config } from '@/lib/config'
 
 const DISCORD_API = config.discord.api;
 
 /** Обработчик slash-команды /member */
 export async function handleMemberCommand(
-  json: APIApplicationCommandInteraction,
+  initialJson: APIApplicationCommandInteraction,
   botToken: string
 ) {
   // команда доступна только в гильдии
-  const guildId = json.guild_id as string | undefined;
-  if (!guildId) {
+  if (!initialJson.guild_id || !initialJson.member) {
     return {
       type: InteractionResponseType.ChannelMessageWithSource,
       data: {
@@ -21,6 +20,9 @@ export async function handleMemberCommand(
     };
   }
 
+  // приведение типа
+  const json = initialJson as APIChatInputApplicationCommandGuildInteraction;
+  const guildId = json.guild_id as string | undefined;
 
   // 1) целевой пользователь: опция user (type=6) или вызывающий
   const optionUserId: string | undefined =
@@ -29,7 +31,7 @@ export async function handleMemberCommand(
       : undefined;
 
   // resolved может уже содержать member выбранного user
-  const resolvedMember: APIGuildMember | undefined = optionUserId
+  const resolvedMember: APIInteractionDataResolvedGuildMember | undefined = optionUserId
     ? json.data?.resolved?.members?.[optionUserId]
     : json.member;
 
@@ -46,9 +48,9 @@ export async function handleMemberCommand(
       cache: "no-store",
     });
     if (mres.ok) {
-      const m = await mres.json();
-      nickname = nickname ?? (m.nick ?? null);
-      roleIds = roleIds.length ? roleIds : (m.roles ?? []);
+      const member = await mres.json();
+      nickname = nickname ?? (member.nick ?? member.user.username ?? null);
+      roleIds = roleIds.length ? roleIds : (member.roles ?? []);
     }
   }
 
@@ -72,8 +74,6 @@ export async function handleMemberCommand(
   const display =
     nickname ??
     resolvedMember?.nick ??
-    resolvedMember?.global_name ??
-    resolvedMember?.username ??
     "(без ника)";
 
   const mention = targetUserId ? `<@${targetUserId}>` : "неизвестно";

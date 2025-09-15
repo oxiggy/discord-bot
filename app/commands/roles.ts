@@ -1,8 +1,6 @@
-import { InteractionResponseType, MessageFlags, ComponentType, ButtonStyle } from "discord-api-types/v10";
-import type { APIInteraction } from "discord-api-types/v10";
+import { InteractionResponseType, MessageFlags, ComponentType, ButtonStyle } from 'discord-api-types/v10'
+import type { APIInteraction, APIMessageComponentInteraction } from "discord-api-types/v10";
 import { config } from '@/lib/config'
-
-type Json = APIInteraction;
 
 const DISCORD_API = config.discord.api;
 
@@ -128,11 +126,10 @@ export const buildRoleButtons = () => ([
       },
     ],
   },
-
 ] as const);
 
 /** Обработчик slash-команды /roles */
-export function handleRolesSlash(json: Json) {
+export function handleRolesCommand(json: APIInteraction) {
   const guildId: string | undefined = json.guild_id;
   if (!guildId) {
     return {
@@ -159,7 +156,7 @@ export const isRoleButton = (customId: string | undefined): boolean =>
   typeof customId === "string" && customId.startsWith("role:");
 
 /** Тумблер роли по клику на кнопку */
-export async function handleRoleButton(json: Json, botToken: string) {
+export async function handleRoleButton(json: APIMessageComponentInteraction, botToken: string) {
   const customId: string = json.data?.custom_id ?? "";
   const kind = customId.split(":")[1] as keyof typeof ROLE_IDS | undefined;
   const roleId = kind ? ROLE_IDS[kind] : undefined;
