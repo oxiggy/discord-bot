@@ -1,15 +1,7 @@
 'use server'
-import {redirect} from "next/navigation";
-import { createClient } from '@/lib/supabase/server'
-import { headers } from 'next/headers'
 
-async function getOrigin() {
-  const h = await headers();
-  const proto = h.get('x-forwarded-proto') ?? 'http';
-  const host = h.get('x-forwarded-host') ?? h.get('host');
-  if (host) return `${proto}://${host}`;
-  return 'http://localhost:3000';
-}
+import { redirect } from "next/navigation";
+import { createClient } from '@/lib/supabase/server';
 
 export type SigninActionState = {
   error?: string
@@ -17,8 +9,13 @@ export type SigninActionState = {
 
 export async function signinAction(state: SigninActionState, formData: FormData) {
   const supabase = await createClient()
+  const origin = formData.get("origin");
 
-  const redirectTo = new URL('/signin/callback', await getOrigin()).toString();
+  if (!origin || typeof origin !== "string") {
+    throw new Error("Origin is required");
+  }
+
+  const redirectTo =  `${origin}/signin/callback`;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'discord',
