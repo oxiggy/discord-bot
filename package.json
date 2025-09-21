@@ -7,6 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "start:tunnel": "cloudflared tunnel --url http://localhost:3000",
     "register:global": "tsx ./scripts/register-commands",
     "register:guild": "tsx ./scripts/register-guild-commands"
   },

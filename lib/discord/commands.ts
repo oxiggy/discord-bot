@@ -2,6 +2,7 @@ export enum CommandName {
   Help = "help",
   Roles = "roles",
   Member = "member",
+  Elonify = "elonify",
 }
 
 export const COMMANDS = [
@@ -20,6 +21,19 @@ export const COMMANDS = [
       },
     ],
   },
+  {
+    name: CommandName.Elonify,
+    description: "Преобразует текст в стиль Илона Маска",
+    type: 1,
+    options: [
+      {
+        name: "text",
+        description: "Текст для преобразования",
+        type: 3,
+        required: true,
+      },
+    ],
+  }
 ]
 
 export const GUILD_COMMANDS = [

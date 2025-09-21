@@ -9,6 +9,7 @@ import { notFoundReply, unknownActionReply } from '@/lib/discord/reply'
 import { handleRoleButton, handleRolesCommand, isRoleButton } from '@/app/commands/roles'
 import { handleHelpCommand } from '@/app/commands/help'
 import { handleMemberCommand } from '@/app/commands/member'
+import { handleElonifyCommand } from '@/app/commands/elonify'
 
 export const runtime = "edge";
 
@@ -36,6 +37,10 @@ export async function POST(req: Request) {
 
         if (name === CommandName.Help) {
           return NextResponse.json(handleHelpCommand());
+        }
+
+        if (name === CommandName.Elonify) {
+          return NextResponse.json(handleElonifyCommand(json));
         }
 
         if (name === CommandName.Roles) {
