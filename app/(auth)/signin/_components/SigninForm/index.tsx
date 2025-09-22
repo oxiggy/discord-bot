@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button";
-import { SigninActionState, signinAction } from '@/app/(auth)/signin/_actions/signin'
+import { type SigninActionState, signinAction } from '@/app/(auth)/signin/_actions/signin'
 
 export const SigninForm = () => {
   const [state, action, pending] = useActionState<SigninActionState, FormData>(signinAction, {})

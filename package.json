@@ -7,6 +7,10 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "biome:check": "biome check",
+    "biome:write": "npm run biome:write-lint && npm run biome:write-format",
+    "biome:write-format": "biome format --write",
+    "biome:write-lint": "biome lint --write",
     "start:tunnel": "cloudflared tunnel --url http://localhost:3000",
     "register:global": "tsx ./scripts/register-commands",
     "register:guild": "tsx ./scripts/register-guild-commands"
@@ -33,6 +37,7 @@
     "zod": "^4.1.7"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.4",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
