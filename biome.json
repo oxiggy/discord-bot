@@ -1,40 +1,40 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
-  "files" : {
-    "includes": ["app/**", "components/**", "!components/ui", "lib/**", "scripts/**"]
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "tab",
-    "indentWidth": 4,
-    "lineWidth": 240
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "a11y": {
-        "noSvgWithoutTitle": "off"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
-      },
-      "style": {
-        "useImportType": "error",
-        "useTemplate": "off"
-      },
-      "suspicious": {
-        "noUnknownAtRules": "off"
-      }
-    }
-  },
-  "assist": {
-    "enabled": false
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "semicolons": "asNeeded"
-    }
-  }
+	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+	"files": {
+		"includes": ["app/**", "components/**", "!components/ui", "lib/**", "scripts/**"]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 4,
+		"lineWidth": 240
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"a11y": {
+				"noSvgWithoutTitle": "off"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "off"
+			},
+			"style": {
+				"useImportType": "error",
+				"useTemplate": "off"
+			},
+			"suspicious": {
+				"noUnknownAtRules": "off"
+			}
+		}
+	},
+	"assist": {
+		"enabled": false
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single",
+			"semicolons": "asNeeded"
+		}
+	}
 }

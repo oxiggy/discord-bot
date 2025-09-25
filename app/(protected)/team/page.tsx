@@ -1,9 +1,5 @@
 import PageWrapper from '@/components/ui/page-wrapper'
 
 export default function Page() {
-  return (
-    <PageWrapper>
-      team management
-    </PageWrapper>
-  );
+	return <PageWrapper>team management</PageWrapper>
 }
