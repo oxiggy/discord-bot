@@ -24,4 +24,7 @@ async function main() {
   console.log("Global commands registered:", text || "(ok)");
 }
 
-main().catch(e => (console.error(e), process.exit(1)));
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+});

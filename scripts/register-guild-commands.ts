@@ -22,4 +22,7 @@ async function main() {
   }
   console.log(`Guild commands registered for ${GUILD_ID}!`);
 }
-main().catch(e => (console.error(e), process.exit(1)));
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+});

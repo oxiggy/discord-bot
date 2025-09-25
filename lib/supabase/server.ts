@@ -6,7 +6,9 @@ export async function createClient() {
   const cookieStore = await cookies()
 
   return createServerClient<Database>(
+    // biome-ignore lint/style/noNonNullAssertion: validated elsewhere
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    // biome-ignore lint/style/noNonNullAssertion: validated elsewhere
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
@@ -16,7 +18,7 @@ export async function createClient() {
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+              { cookieStore.set(name, value, options) }
             )
           } catch {
             // The `setAll` method was called from a Server Component.

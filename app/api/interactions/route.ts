@@ -73,7 +73,7 @@ export async function POST(req: Request) {
         return new NextResponse("Unhandled interaction type", { status: 400 });
       }
     }
-  } catch (e: unknown) {
+  } catch (_e: unknown) {
     return NextResponse.json({
       type: InteractionResponseType.ChannelMessageWithSource,
       data: { content: `Ошибка... или это просто мини-саботаж 🤖`, flags: MessageFlags.Ephemeral },

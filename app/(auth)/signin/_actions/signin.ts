@@ -7,7 +7,7 @@ export type SigninActionState = {
   error?: string
 }
 
-export async function signinAction(state: SigninActionState, formData: FormData) {
+export async function signinAction(_state: SigninActionState, formData: FormData) {
   const supabase = await createClient()
   const origin = formData.get("origin");
 
