@@ -13,7 +13,15 @@
     "biome:write-lint": "biome lint --write",
     "start:tunnel": "cloudflared tunnel --url http://localhost:3000",
     "register:global": "tsx ./scripts/register-commands",
-    "register:guild": "tsx ./scripts/register-guild-commands"
+    "register:guild": "tsx ./scripts/register-guild-commands",
+    "supabase:init": "npx supabase@latest init",
+    "supabase:login": "npx supabase@latest login",
+    "supabase:link": "npx supabase@latest link --project-ref <your-project-ref>",
+    "supabase:pull": "npx supabase@latest db pull",
+    "supabase:types": "npx supabase@latest gen types typescript --linked --schema public > types/supabase.ts",
+    "supabase:reset": "npx supabase@latest db reset --linked",
+    "supabase:migrate": "npx supabase@latest migration new migration_name",
+    "supabase:push": "npx supabase@latest db push"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
