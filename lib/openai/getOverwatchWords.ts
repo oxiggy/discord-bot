@@ -1,7 +1,7 @@
 import { aiChat } from '@/lib/openai/service'
 
 export async function getOverwatchWords(): Promise<string[]> {
-  const prompt = `нужно 20 слов, связанный с овервотч - имена героев и название карт. 
+  const prompt = `нужно 50 слов, связанный с овервотч - имена героев и название карт. 
   ответ в одном предложении, слова просто перечисли через пробел`;
 
   const { success, data, error } = await aiChat({
