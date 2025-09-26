@@ -44,8 +44,7 @@ export async function handleWordCommand() {
             },
           ]
         }
-      ],
-      flags: MessageFlags.Ephemeral,
+      ]
     },
   };
 }
@@ -130,15 +129,29 @@ export async function handleWordModalSubmit(json: APIModalSubmitInteraction) {
   const original = data.content
   const isCorrect = normalizeString(answer) === normalizeString(original)
 
+  // Неверный ответ
+  if (!isCorrect) {
+    return {
+      type: InteractionResponseType.ChannelMessageWithSource,
+      data: {
+        content: "❌ Неверно. Попробуйте ещё раз!",
+        flags: MessageFlags.Ephemeral,
+      },
+    };
+  }
+
+  // Верный ответ
+  const userId = json.member?.user?.id ?? json.user?.id
+  const mention = userId ? `<@${userId}>` : 'Кто-то'
+
   return {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
       content: [
-        isCorrect ? '✅ Верно!' : '❌ Неверно.',
-        `Ваш ответ: **${answer || '—'}**`,
+        `Слово отгадано: ${mention}`,
+        `Ответ: **${answer || '—'}**`,
         `Загаданное слово: **${original}**`,
-      ].join('\n'),
-      flags: MessageFlags.Ephemeral,
+      ].join('\n')
     },
   }
 }
