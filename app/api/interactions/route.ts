@@ -10,6 +10,7 @@ import { handleRoleButton, handleRolesCommand, isRoleButton } from '@/app/comman
 import { handleHelpCommand } from '@/app/commands/help'
 import { handleMemberCommand } from '@/app/commands/member'
 import { handleElonifyCommand } from '@/app/commands/elonify'
+import { handleWordButton, handleWordCommand, handleWordModalSubmit, isWordButton, isWordModalSubmit } from '@/app/commands/word'
 
 export const runtime = 'edge'
 
@@ -39,6 +40,11 @@ export async function POST(req: Request) {
 					return NextResponse.json(handleHelpCommand())
 				}
 
+				if (name === CommandName.Word) {
+					const response = await handleWordCommand()
+					return NextResponse.json(response)
+				}
+
 				if (name === CommandName.Elonify) {
 					return NextResponse.json(handleElonifyCommand(json))
 				}
@@ -61,8 +67,24 @@ export async function POST(req: Request) {
 			case InteractionType.MessageComponent: {
 				const customId: string | undefined = json.data?.custom_id
 
+				if (isWordButton(customId)) {
+					return NextResponse.json(handleWordButton(customId!))
+				}
+
 				if (isRoleButton(customId)) {
 					const response = await handleRoleButton(json, BOT_TOKEN)
+					return NextResponse.json(response)
+				}
+
+				return NextResponse.json(unknownActionReply)
+			}
+
+			/**
+			 * Модальные окна (отправка форм)
+			 */
+			case InteractionType.ModalSubmit: {
+				if (isWordModalSubmit(json)) {
+					const response = await handleWordModalSubmit(json)
 					return NextResponse.json(response)
 				}
 

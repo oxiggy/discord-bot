@@ -1,12 +1,15 @@
 export enum CommandName {
 	Help = 'help',
+	Word = 'word',
 	Roles = 'roles',
 	Member = 'member',
 	Elonify = 'elonify',
+
 }
 
 export const COMMANDS = [
 	{ name: CommandName.Help, description: 'Список доступных команд', type: 1 },
+	{ name: CommandName.Word, description: 'Собрать слово из букв', type: 1 },
 	{ name: CommandName.Roles, description: 'Выбрать роли по интересам', type: 1 },
 	{
 		name: CommandName.Member,
