@@ -148,7 +148,7 @@ export async function handleWordModalSubmit(json: APIModalSubmitInteraction) {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
       content: [
-        `Слово отгадано: ${mention}`,
+        `Слово отгадано ${mention}`,
         `Ответ: **${answer || '—'}**`,
         `Загаданное слово: **${original}**`,
       ].join('\n')

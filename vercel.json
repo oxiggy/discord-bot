@@ -1,0 +1,6 @@
+{
+  "crons": [{
+    "path": "/api/generate/words?token=%CRON_SECRET%",
+    "schedule": "0 6 * * *"
+  }]
+}
